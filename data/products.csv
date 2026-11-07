@@ -1,0 +1,23 @@
+product_id,product_name,category,unit_price,cost_price,stock_quantity,currency,active
+P001,"Dell 24"" Monitor P2425H",Monitor,4590000,3800000,45,VND,TRUE
+P002,"LG 27"" Monitor 27MP400",Monitor,3890000,3200000,12,VND,TRUE
+P003,"Samsung 32"" Monitor LS32A600",Monitor,7250000,6100000,5,VND,TRUE
+P004,Logitech K120 Wired Keyboard,Keyboard,290000,215000,180,VND,TRUE
+P005,Logitech MK270 Wireless Keyboard Mouse Combo,Keyboard,690000,540000,60,VND,TRUE
+P006,Dell KB216 Wired Keyboard,Keyboard,345000,260000,25,VND,TRUE
+P007,Logitech M170 Wireless Mouse,Mouse,265000,195000,150,VND,TRUE
+P008,Logitech M331 Silent Wireless Mouse,Mouse,420000,320000,20,VND,TRUE
+P009,Dell MS116 Wired Mouse,Mouse,155000,110000,200,VND,TRUE
+P010,HP LaserJet Pro M404dn Printer,Printer,8950000,7600000,8,VND,TRUE
+P011,Canon imageCLASS MF445dw Printer,Printer,11500000,9800000,3,VND,TRUE
+P012,A4 Copy Paper 80gsm (500 sheets),Paper,78000,62000,850,VND,TRUE
+P013,A3 Copy Paper 80gsm (500 sheets),Paper,156000,128000,120,VND,TRUE
+P014,HP 26A Toner Cartridge,Consumables,2150000,1750000,30,VND,TRUE
+P015,Canon 057 Toner Cartridge,Consumables,2480000,2020000,15,VND,TRUE
+P016,Ergonomic Office Chair EC-200,Furniture,3250000,2600000,18,VND,TRUE
+P017,Office Desk 1400x700 OD-140,Furniture,4100000,3350000,10,VND,TRUE
+P018,4-Drawer Filing Cabinet FC-04,Furniture,2890000,2300000,6,VND,TRUE
+P019,USB-C Docking Station 11-in-1,Accessories,1850000,1450000,22,VND,TRUE
+P020,HDMI Cable 2.0 (2m),Accessories,125000,85000,300,VND,TRUE
+P021,Monitor Arm Single MA-01,Accessories,1250000,950000,0,VND,TRUE
+P022,"Dell 22"" Monitor E2222H",Monitor,3150000,2550000,40,VND,FALSE

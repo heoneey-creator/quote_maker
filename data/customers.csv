@@ -1,0 +1,7 @@
+customer_id,company_name,contact_name,email,customer_tier,discount_rate
+C001,"Saigon Tech Solutions Co., Ltd.",Nguyen Van Minh,minh.nguyen@saigontech.example.com,GOLD,0.05
+C002,Hanoi Trading JSC,Tran Thi Hoa,hoa.tran@hanoitrading.example.com,SILVER,0.03
+C003,"Mekong Logistics Co., Ltd.",Le Quoc Dat,dat.le@mekonglog.example.com,STANDARD,0.00
+C004,VietPhone Manufacturing JSC,Pham Thu Ha,ha.pham@vietphone.example.com,PLATINUM,0.08
+C005,Da Nang Resort Group,Vo Minh Tuan,tuan.vo@dnresort.example.com,SILVER,0.03
+C006,"Korea Vina Electronics Co., Ltd.",Kim Jinho,jinho.kim@koreavina.example.com,GOLD,0.05

@@ -1,0 +1,11 @@
+.env
+credentials/
+*.json
+!.vscode/*.json
+__pycache__/
+*.pyc
+.venv/
+venv/
+output/
+.DS_Store
+.pytest_cache/

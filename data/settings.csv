@@ -1,0 +1,8 @@
+key,value
+company_name,"VietOffice Supply Co., Ltd."
+company_address,"12 Nguyen Hue Blvd, District 1, Ho Chi Minh City, Vietnam"
+company_email,sales@vietoffice.example.com
+company_phone,+84 28 3822 1234
+quotation_valid_days,14
+default_currency,VND
+tax_rate,0.10

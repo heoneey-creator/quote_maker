@@ -1,0 +1,7 @@
+streamlit>=1.40
+pandas>=2.2
+anthropic>=0.40
+gspread>=6.1
+google-auth>=2.35
+reportlab>=4.2
+python-dotenv>=1.0
