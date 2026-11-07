@@ -17,15 +17,23 @@ class Config:
     anthropic_model: str
     google_credentials_file: str
     google_sheet_id: str
+    # 배포 환경(Streamlit Cloud 등)에는 JSON 파일을 올릴 수 없다.
+    # 그래서 JSON 내용을 환경변수 문자열로 받는 경로도 둔다.
+    google_credentials_json: str = ""
 
     @property
     def claude_ready(self) -> bool:
         return bool(self.anthropic_api_key)
 
     @property
+    def has_credentials(self) -> bool:
+        return bool(self.google_credentials_json) or (
+            bool(self.google_credentials_file) and Path(self.google_credentials_file).is_file())
+
+    @property
     def sheets_ready(self) -> bool:
-        """서비스 계정 파일이 실제로 존재하고 시트 ID 가 있을 때만 True."""
-        return bool(self.google_sheet_id) and bool(self.google_credentials_file) and Path(self.google_credentials_file).is_file()
+        """인증 정보가 실제로 있고 시트 ID 가 있을 때만 True."""
+        return bool(self.google_sheet_id) and self.has_credentials
 
     @property
     def mock_mode(self) -> bool:
@@ -36,9 +44,10 @@ class Config:
 def load_config() -> Config:
     return Config(
         anthropic_api_key=os.getenv("ANTHROPIC_API_KEY", "").strip(),
-        anthropic_model=os.getenv("ANTHROPIC_MODEL", "claude-sonnet-5-5").strip(),
+        anthropic_model=os.getenv("ANTHROPIC_MODEL", "claude-opus-5-5").strip(),
         google_credentials_file=os.getenv("GOOGLE_SERVICE_ACCOUNT_FILE", "").strip(),
         google_sheet_id=os.getenv("GOOGLE_SHEET_ID", "").strip(),
+        google_credentials_json=os.getenv("GOOGLE_SERVICE_ACCOUNT_JSON", "").strip(),
     )
 
 

@@ -99,6 +99,7 @@ https://docs.google.com/spreadsheets/d/①여기가_시트_ID①/edit#gid=0
 
 | 증상 | 원인 |
 |---|---|
+| `400 The document must not be an Office file` | 파일이 구글 스프레드시트가 아니라 **업로드된 엑셀(.xlsx)** 입니다. 드라이브에서 열고 **파일 → Google 스프레드시트로 저장** 후, 새로 생긴 파일의 ID 를 쓰세요 (ID 가 바뀝니다). |
 | `403 PERMISSION_DENIED` | 4번 공유 안 됨, 또는 5번 API 미사용 설정 |
 | `404 Requested entity was not found` | 시트 ID 오타 |
 | `WorksheetNotFound` | 탭 이름 철자 (`Products` ≠ `products`) |

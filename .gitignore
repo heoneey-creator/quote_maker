@@ -9,3 +9,8 @@ venv/
 output/
 .DS_Store
 .pytest_cache/
+
+# PDF 폰트 (크기 10MB, README 의 안내로 각자 내려받습니다)
+fonts/*.ttf
+fonts/*.otf
+logo_upload.png
