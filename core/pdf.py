@@ -138,6 +138,18 @@ def _styles(font: str) -> dict:
     }
 
 
+def _contact_line(settings: dict) -> str:
+    """연락처 한 줄. Settings 에 없는 항목은 'Tel -' 로 찍지 않고 빼버린다."""
+    parts = []
+    phone = str(settings.get("company_phone", "")).strip()
+    email = str(settings.get("company_email", "")).strip()
+    if phone:
+        parts.append("Tel " + phone)
+    if email:
+        parts.append(email)
+    return " · ".join(parts)
+
+
 def _logo_flowable(logo_path, width=42 * mm):
     if not logo_path:
         return None
@@ -156,8 +168,7 @@ def _header(quote: Quote, settings: dict, st: dict, logo_path) -> list:
     company = [
         Paragraph(str(settings.get("company_name", "")), st["h"]),
         Paragraph(str(settings.get("company_address", "")), st["small"]),
-        Paragraph("Tel " + str(settings.get("company_phone", "-"))
-                  + " · " + str(settings.get("company_email", "-")), st["small"]),
+        Paragraph(_contact_line(settings), st["small"]),
     ]
     logo = _logo_flowable(logo_path)
     left = [logo, Spacer(1, 3 * mm)] + company if logo else company
@@ -308,8 +319,7 @@ def _footer(quote: Quote, settings: dict, st: dict) -> list:
         "부가세는 Settings 의 세율을 적용했습니다.<br/>"
         + str(settings.get("company_name", "")) + " · "
         + str(settings.get("company_address", "")) + "<br/>"
-        + "Tel " + str(settings.get("company_phone", "-")) + " · "
-        + str(settings.get("company_email", "-")), st["small"])]
+        + _contact_line(settings), st["small"])]
 
 
 def render_quote_pdf(quote: Quote, settings: dict, logo_path=None) -> bytes:

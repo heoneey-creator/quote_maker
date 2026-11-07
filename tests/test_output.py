@@ -193,3 +193,23 @@ def test_unsupported_language_is_rejected(quote):
 def test_vietnamese_draft_keeps_diacritics(quote):
     body = draft_email(quote, "vi", MOCK_CFG).body
     assert "Kính gửi" in body and "Trân trọng" in body
+
+
+# ------------------------------------------------------------ 연락처 누락
+
+def test_missing_phone_is_omitted_not_printed_as_dash():
+    """실제 시트 Settings 에 company_phone 이 없을 수 있다. 'Tel -' 로 찍으면 안 된다."""
+    from core.pdf import _contact_line
+    assert _contact_line({"company_email": "a@b.vn"}) == "a@b.vn"
+    assert _contact_line({"company_phone": "+84 28 1234"}) == "Tel +84 28 1234"
+    assert _contact_line({"company_phone": "+84 1", "company_email": "a@b.vn"}) \
+        == "Tel +84 1 · a@b.vn"
+    assert _contact_line({}) == ""
+    assert _contact_line({"company_phone": "  ", "company_email": ""}) == ""
+
+
+def test_pdf_without_phone_has_no_dangling_tel(quote, catalog):
+    settings = {k: v for k, v in catalog.settings.items() if k != "company_phone"}
+    text = _pdf_text(render_quote_pdf(quote, settings))
+    assert "Tel -" not in text
+    assert str(settings["company_email"]) in text
