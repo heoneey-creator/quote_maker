@@ -450,8 +450,8 @@ else:
         st.error("`.env` 의 `ANTHROPIC_API_KEY` 가 비어 있어 **MOCK 모드**로 동작합니다.")
 
     st.subheader("Google Sheets")
-    st.write(f"인증 파일 `{cfg.google_credentials_file or '(없음)'}` · "
-             f"시트 ID `{mask(cfg.google_sheet_id)}`")
+    # 원문을 그대로 쓰면 안 된다 — JSON 을 넣은 경우 private key 가 화면에 찍힌다.
+    st.write(f"인증 정보: {cfg.credentials_label} · 시트 ID `{mask(cfg.google_sheet_id)}`")
     try:
         catalog = cached_catalog(cfg.google_sheet_id, cfg.google_credentials_file)
         st.success(f"{catalog.source} 에서 상품 {len(catalog.products)}건 · "

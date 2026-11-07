@@ -33,10 +33,16 @@ FALLBACK_FONT = "Helvetica"
 FONT_CANDIDATES = [
     PROJECT_ROOT / "fonts" / "NotoSansKR-Regular.ttf",
     Path("C:/Windows/Fonts/NotoSansKR-VF.ttf"),
+    # Debian/Ubuntu 의 fonts-noto-cjk (Streamlit Cloud 배포 환경).
+    # .ttc 는 여러 폰트를 담은 모음이라 subfontIndex 를 돌려봐야 한다.
+    Path("/usr/share/fonts/opentype/noto/NotoSansCJK-VF.otf.ttc"),
     Path("/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc"),
+    Path("/usr/share/fonts/opentype/noto/NotoSerifCJK-Regular.ttc"),
     Path("/usr/share/fonts/truetype/noto/NotoSansKR-Regular.ttf"),
-    Path("/usr/share/fonts/opentype/noto/NotoSansKR-Regular.otf"),
 ]
+
+# .ttc 안의 폰트 수는 파일마다 달라서, 커버리지를 통과하는 첫 번째를 쓴다.
+MAX_SUBFONTS = 6
 
 # 이 글자들이 안 나오면 폰트가 부적합하다고 판단한다.
 COVERAGE_PROBE = "견적서 Nguyễn Huệ Đống ố ồ ườ ₫ QUOTATION"
@@ -62,9 +68,30 @@ class FontState:
         return not self.warning
 
 
-def _missing_glyphs(path: Path) -> list:
-    face = TTFont("probe", str(path)).face
+def _missing_glyphs(path: Path, subfont: int = 0) -> list:
+    face = TTFont("probe", str(path), subfontIndex=subfont).face
     return [c for c in COVERAGE_PROBE if c != " " and not face.charToGlyph.get(ord(c))]
+
+
+def _try_font(path: Path, subfont: int, tried: list) -> bool:
+    label = path.name + (f"[{subfont}]" if subfont else "")
+    try:
+        missing = _missing_glyphs(path, subfont)
+    except Exception as exc:        # 깨진 파일, 없는 subfont, CFF 미지원 등
+        tried.append(label + ": " + type(exc).__name__)
+        return False
+    if missing:
+        tried.append(label + ": " + "".join(missing) + " 글자 없음")
+        return False
+    try:
+        pdfmetrics.registerFont(TTFont(FONT_NAME, str(path), subfontIndex=subfont))
+    except Exception as exc:
+        tried.append(label + ": 등록 실패 " + type(exc).__name__)
+        return False
+    # 변동(variable) 폰트라 별도 Bold 파일이 없다. 굵게 요청도 같은 파일로 받는다.
+    pdfmetrics.registerFontFamily(FONT_NAME, normal=FONT_NAME, bold=FONT_NAME,
+                                  italic=FONT_NAME, boldItalic=FONT_NAME)
+    return True
 
 
 def register_font() -> FontState:
@@ -75,21 +102,17 @@ def register_font() -> FontState:
 
     tried = []
     for path in FONT_CANDIDATES:
-        if not path.is_file():
-            continue
         try:
-            missing = _missing_glyphs(path)
-            if missing:
-                tried.append(path.name + ": " + "".join(missing) + " 글자 없음")
+            if not path.is_file():
                 continue
-            pdfmetrics.registerFont(TTFont(FONT_NAME, str(path)))
-            # 변동(variable) 폰트라 별도 Bold 파일이 없다. 굵게 요청도 같은 파일로 받는다.
-            pdfmetrics.registerFontFamily(FONT_NAME, normal=FONT_NAME, bold=FONT_NAME,
-                                          italic=FONT_NAME, boldItalic=FONT_NAME)
-            _font_state = FontState(FONT_NAME, str(path))
-            return _font_state
-        except Exception as exc:  # 폰트 파일이 깨진 경우
-            tried.append(path.name + ": " + type(exc).__name__)
+        except OSError:
+            continue
+        subfonts = range(MAX_SUBFONTS) if path.suffix.lower() == ".ttc" else [0]
+        for subfont in subfonts:
+            if _try_font(path, subfont, tried):
+                _font_state = FontState(FONT_NAME, str(path)
+                                        + (f" (#{subfont})" if subfont else ""))
+                return _font_state
 
     detail = (" 시도한 폰트: " + "; ".join(tried)) if tried else ""
     _font_state = FontState(

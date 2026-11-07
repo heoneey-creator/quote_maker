@@ -216,15 +216,22 @@ def _credentials(cfg: Config):
     """인증 정보를 파일 또는 환경변수 JSON 문자열에서 만든다."""
     from google.oauth2.service_account import Credentials
 
-    if cfg.google_credentials_json:
+    raw = cfg.credentials_json
+    if raw:
         import json
         try:
-            info = json.loads(cfg.google_credentials_json)
-        except json.JSONDecodeError:
-            raise DataError("GOOGLE_SERVICE_ACCOUNT_JSON 이 올바른 JSON 이 아닙니다.")
+            info = json.loads(raw)
+        except json.JSONDecodeError as exc:
+            raise DataError("서비스 계정 JSON 을 읽을 수 없습니다 (" + exc.msg + ").\n"
+                            "Secrets 에 넣을 때는 홑따옴표로 감싸고 private_key 안의 "
+                            "\\n 을 그대로 두세요.")
         return Credentials.from_service_account_info(info, scopes=READONLY_SCOPE)
-    return Credentials.from_service_account_file(cfg.google_credentials_file,
-                                                 scopes=READONLY_SCOPE)
+
+    path = cfg.credentials_path
+    if path is None:
+        raise DataError("서비스 계정 인증 정보를 쓸 수 없습니다 — "
+                        + cfg.credentials_label)
+    return Credentials.from_service_account_file(str(path), scopes=READONLY_SCOPE)
 
 
 def _load_from_sheets(cfg: Config, warnings: list) -> Catalog:

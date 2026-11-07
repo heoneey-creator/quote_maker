@@ -36,6 +36,25 @@ GOOGLE_SERVICE_ACCOUNT_JSON = '{"type":"service_account","project_id":"...","pri
 > `private_key` 안의 줄바꿈은 `\n` 문자 그대로 유지하고, 전체를 **홑따옴표**로 감싸세요
 > (쌍따옴표로 감싸면 `\n` 이 깨집니다).
 
+> ⚠️ **JSON 내용을 `GOOGLE_SERVICE_ACCOUNT_FILE` 쪽에 넣지 마세요.**
+> 그 변수는 파일 **경로**를 받습니다. 흔한 실수라서 앱이 알아서 인식하고 넘어가지만,
+> 변수를 맞게 쓰는 편이 설정을 읽기 쉽습니다.
+> (예전에는 이 실수가 리눅스에서 `OSError: File name too long` 으로 앱을
+> 죽였습니다. 지금은 죽지 않고 안내 문구가 나옵니다.)
+
+### 설정 확인 방법
+
+배포 후 **Settings / Connection** 화면 한 곳에서 전부 확인됩니다.
+
+| 항목 | 정상일 때 |
+|---|---|
+| Claude API | 초록색 "설정됨" |
+| 인증 정보 | `JSON 문자열 (2,383자)` 또는 `파일 credentials.json` |
+| Google Sheets | 초록색 "Google Sheets 에서 상품 N건..." |
+| PDF 폰트 | 초록색 (한글·베트남어 지원) |
+
+이 화면은 API 키와 private key 를 절대 출력하지 않습니다.
+
 ### 3. 폰트
 
 저장소의 [packages.txt](packages.txt) 에 `fonts-noto-cjk` 가 들어 있어

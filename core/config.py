@@ -26,9 +26,49 @@ class Config:
         return bool(self.anthropic_api_key)
 
     @property
+    def credentials_json(self) -> str:
+        """JSON 내용을 _FILE 쪽에 넣는 실수가 흔하다 (배포 Secrets 설정에서).
+        값이 '{' 로 시작하면 경로가 아니라 내용으로 본다."""
+        if self.google_credentials_json:
+            return self.google_credentials_json
+        if self.google_credentials_file.lstrip().startswith("{"):
+            return self.google_credentials_file
+        return ""
+
+    @property
+    def credentials_path(self) -> Path | None:
+        """존재하는 인증 파일 경로, 없으면 None.
+
+        경로가 255자를 넘거나 NUL 이 섞이면 is_file() 이 예외를 던진다.
+        설정값 하나가 앱 전체를 죽이지 않게 여기서 흡수한다.
+        """
+        raw = self.google_credentials_file.strip()
+        if not raw or self.credentials_json:
+            return None
+        try:
+            path = Path(raw)
+            return path if path.is_file() else None
+        except (OSError, ValueError):
+            return None
+
+    @property
     def has_credentials(self) -> bool:
-        return bool(self.google_credentials_json) or (
-            bool(self.google_credentials_file) and Path(self.google_credentials_file).is_file())
+        return bool(self.credentials_json) or self.credentials_path is not None
+
+    @property
+    def credentials_label(self) -> str:
+        """화면에 띄워도 안전한 설명. 원문을 쓰면 private key 가 노출된다."""
+        if self.credentials_json:
+            return "JSON 문자열 (" + f"{len(self.credentials_json):,}" + "자)"
+        if self.credentials_path is not None:
+            return "파일 " + self.credentials_path.name
+        raw = self.google_credentials_file.strip()
+        if not raw:
+            return "(없음)"
+        if len(raw) > 80:
+            return "설정값이 비정상입니다 (경로인데 " + f"{len(raw):,}" + "자). " \
+                   "JSON 내용을 넣으셨다면 GOOGLE_SERVICE_ACCOUNT_JSON 을 쓰세요."
+        return "파일을 찾을 수 없음: " + raw
 
     @property
     def sheets_ready(self) -> bool:
